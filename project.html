@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gov Exam Prep Portal - Dark Mode</title>
+<style>
+  /* --- Dark Theme Base --- */
+  body {
+    margin:0;
+    padding:20px;
+    font-family: Arial,sans-serif;
+    background: #0f0f0f;
+    color:#eee;
+    overflow-x:hidden;
+  }
+  h1,h2 { text-align:center; color:#00ffcc; }
+  .section {
+    background: rgba(20,20,20,0.9);
+    margin:15px auto;
+    padding:20px;
+    border-radius:12px;
+    max-width:900px;
+    box-shadow: 0 0 15px #00ffcc50;
+    position: relative;
+    z-index: 2;
+  }
+  input, select, button {
+    padding:10px;
+    margin:8px 0;
+    width:100%;
+    font-size:16px;
+    border-radius:5px;
+    border:none;
+  }
+  input, select { background:#222; color:#fff; }
+  button { background:#00ffcc; color:#000; cursor:pointer; font-weight:bold; }
+  button:hover { background:#00e6b8; }
+  .output { padding:12px; background:#111; border-left:4px solid #00ffcc; margin-top:10px; border-radius:5px; }
+  a { color:#00ffcc; text-decoration:none; }
+  a:hover { color:#00e6b8; text-decoration:underline; }
+  ul { margin-top:10px; }
+  .roadmap-step { margin-bottom:10px; padding:10px; background:#111; border-left:4px solid #00ffcc; border-radius:5px; }
+  
+  /* --- 3D Animated Background --- */
+  body::before {
+    content: "";
+    position: fixed;
+    top:0; left:0;
+    width:200%;
+    height:200%;
+    background: radial-gradient(circle at 20% 30%, #00ffcc20, transparent 40%), 
+                radial-gradient(circle at 70% 80%, #ff00cc20, transparent 50%), 
+                radial-gradient(circle at 50% 50%, #ffdd0080, transparent 60%);
+    animation: moveBackground 30s linear infinite;
+    z-index:1;
+  }
+  @keyframes moveBackground {
+    0% { transform: translate(0,0) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+  }
+</style>
+</head>
+<body>
+
+<h1>Gov Exam Prep Portal</h1>
+
+<!-- Exam Patterns -->
+<div class="section">
+  <h2>Exam Patterns</h2>
+  <select id="examPatternSelect" onchange="showPattern()">
+    <option value="">Select Exam Pattern</option>
+    <option value="upsc">UPSC Civil Services</option>
+    <option value="ssc">SSC Exams</option>
+    <option value="railway">Railway Exams</option>
+    <option value="bank">Bank PO / Clerk</option>
+  </select>
+  <div class="output" id="patternOutput"></div>
+</div>
+
+<!-- Roadmaps -->
+<div class="section">
+  <h2>Exam Preparation Roadmaps</h2>
+  <select id="roadmapSelect" onchange="showRoadmap()">
+    <option value="">Select Exam</option>
+    <option value="upsc">UPSC Civil Services</option>
+    <option value="ssc">SSC Exams</option>
+    <option value="bank">Bank PO / Clerk</option>
+    <option value="railway">Railway Exams</option>
+  </select>
+  <div id="roadmapOutput"></div>
+</div>
+
+<!-- Past Papers -->
+<div class="section">
+  <h2>Previous Year Question Papers (Links)</h2>
+  <select id="examPapersSelect" onchange="showPaperLinks()">
+    <option value="">Select Exam</option>
+    <option value="upsc">UPSC Papers</option>
+    <option value="ssc">SSC Papers</option>
+    <option value="bank">Bank Exam Papers</option>
+    <option value="railway">Railway Exam Papers</option>
+  </select>
+  <ul id="papersList"></ul>
+</div>
+
+<!-- Question Solver -->
+<div class="section">
+  <h2>Question Solver + Tricks</h2>
+  <input type="text" id="questionInput" placeholder="Enter a question or math expression">
+  <button onclick="solveQuestion()">Solve</button>
+  <div class="output" id="answerOutput"></div>
+  <div class="output" id="trickOutput"></div>
+</div>
+
+<script>
+  // Patterns
+  const patterns = {
+    upsc: "UPSC: Prelims (GS + CSAT), Mains (9 papers), Interview.",
+    ssc: "SSC: Tier-I objective, Tier-II objective/descriptive, Skill Test.",
+    railway: "Railway: Arithmetic, Reasoning, General Awareness.",
+    bank: "Bank: Prelims (Quant, Reasoning, English), Mains (Quant, Reasoning+CA, English)."
+  };
+  function showPattern(){document.getElementById("patternOutput").textContent=patterns[document.getElementById("examPatternSelect").value]||"";}
+
+  // Roadmaps
+  const roadmaps = {
+    upsc:["Understand syllabus","Read NCERTs","Follow current affairs","Practice PYQs & mocks","Prepare optional","Revise & Prelims","Focus on Mains writing","Interview prep"],
+    ssc:["Understand syllabus","Focus on Quant, Reasoning, English","Solve PYQs","Take mocks","Revise weak topics"],
+    bank:["Prelims syllabus","Daily mocks","Mains topics + CA","Full-length mocks","Revise formulas & shortcuts"],
+    railway:["Understand syllabus","Practice Arithmetic & Reasoning","Solve PYQs","Mock tests","Daily revision"]
+  };
+  function showRoadmap(){
+    const sel=document.getElementById("roadmapSelect").value;
+    const output=document.getElementById("roadmapOutput"); output.innerHTML="";
+    if(roadmaps[sel]) roadmaps[sel].forEach((step,i)=>{const d=document.createElement("div");d.className="roadmap-step";d.textContent=`Step ${i+1}: ${step}`;output.appendChild(d);});
+  }
+
+  // Past Papers
+  const paperLinks={
+    upsc:[{text:"UPSC Official PDFs",url:"https://upsc.gov.in"},{text:"UPSC PYQs Database",url:"https://upscquestionpaper.in/"}],
+    ssc:[{text:"SSC Past Papers",url:"https://ssc.nic.in"}],
+    bank:[{text:"Bank PO/Clerk Papers",url:"https://bankexamportal.com/bank-exam-papers"}],
+    railway:[{text:"Railway Papers & Downloads",url:"https://rrbexam.net/railway-question-papers/"}]
+  };
+  function showPaperLinks(){
+    const sel=document.getElementById("examPapersSelect").value;
+    const list=document.getElementById("papersList"); list.innerHTML="";
+    if(paperLinks[sel]) paperLinks[sel].forEach(p=>{const li=document.createElement("li");li.innerHTML=`<a href="${p.url}" target="_blank">${p.text}</a>`;list.appendChild(li);});
+  }
+
+  // Solver + Tricks
+  const tricks={math:"Break calculation into steps, use shortcuts",logic:"Look for patterns, eliminate wrong choices",general:"Read carefully, recall facts, use mnemonics"};
+  function solveQuestion(){
+    const q=document.getElementById("questionInput").value.trim();
+    const ansOut=document.getElementById("answerOutput"); const trickOut=document.getElementById("trickOutput");
+    if(!q){ansOut.textContent="Please enter a question.";trickOut.textContent="";return;}
+    if(/^[0-9+\-*/().\s]+$/.test(q)){try{ansOut.textContent="Answer: "+eval(q);trickOut.textContent=tricks.math;}catch{ansOut.textContent="Invalid math expression.";trickOut.textContent=tricks.math;}return;}
+    const lower=q.toLowerCase();
+    if(lower.includes("who")||lower.includes("what")||lower.includes("when")||lower.includes("where")){ansOut.textContent="General knowledge question. Check links.";trickOut.textContent=tricks.general;}
+    else if(lower.includes("pattern")||lower.includes("series")){ansOut.textContent="Logic/series question. Find progression.";trickOut.textContent=tricks.logic;}
+    else{ansOut.textContent="Cannot solve automatically.";trickOut.textContent="";}
+  }
+</script>
+
+</body>
+</html>
